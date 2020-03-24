@@ -66,6 +66,24 @@ public class RCTAnalytics extends ReactContextBaseJavaModule {
 	}
 
 	@ReactMethod
+    public void identify(String val) {
+        try{
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            messageDigest.update(val.getBytes());
+            String encryptedString = new String(messageDigest.digest());
+            this.mixpanel.identify(encryptedString);
+            this.mixpanel.getPeople().identify(encryptedString);
+        } catch (Exception e){}
+    }
+	
+    @ReactMethod
+    public void setUserProperties(String val) {
+        try{
+            this.mixpanel.getPeople().set("Sign up date", "2020-01-02T21:07:03Z");
+        } catch (Exception e){}
+    }
+
+	@ReactMethod
 	public void getRemoteVariables(Promise promise) {
 		try{
 			String vars = remoteVariables.get();

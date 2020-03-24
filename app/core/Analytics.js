@@ -15,12 +15,10 @@ class Analytics {
 	 * Whether the manager has permission to send analytics
 	 */
 	enabled;
-
 	/**
 	 * State change callbacks
 	 */
 	listeners;
-
 	/**
 	 * Notifies subscribers of current enabled
 	 */
@@ -68,6 +66,14 @@ class Analytics {
 	 */
 	subscribe = listener => {
 		this.listeners.push(listener);
+	};
+
+	identify = val => {
+		RCTAnalytics.identify(val);
+	};
+
+	setUserProperties = val => {
+		RCTAnalytics.setUserProperties(val);
 	};
 
 	/**
@@ -209,6 +215,12 @@ export default {
 	},
 	enable() {
 		return instance && instance.enable();
+	},
+	identify(val) {
+		return instance && instance.identify(val);
+	},
+	setUserProperties(val) {
+		return instance && instance.setUserProperties(val);
 	},
 	disable() {
 		return instance && instance.disable();
