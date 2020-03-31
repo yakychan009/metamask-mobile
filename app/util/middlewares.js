@@ -28,8 +28,7 @@ export function createLoggerMiddleware(opts) {
 	return function loggerMiddleware(/** @type {any} */ req, /** @type {any} */ res, /** @type {Function} */ next) {
 		next((/** @type {Function} */ cb) => {
 			if (res.error) {
-				const { error, ...resWithoutError } = res;
-				Logger.error(error, { message: 'Error in RPC response', res: resWithoutError });
+				Logger.error('Error in RPC response:\n', res);
 			}
 			if (req.isMetamaskInternal) {
 				return;

@@ -9,6 +9,8 @@
 #import "RCTAnalytics.h"
 #import <Mixpanel/Mixpanel.h>
 #import <Mixpanel/MPTweakInline.h>
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
 
 @implementation RCTAnalytics
 RCT_EXPORT_MODULE()
@@ -18,6 +20,7 @@ RCT_EXPORT_METHOD(optIn:(BOOL) val) {
     dispatch_async(dispatch_get_main_queue(), ^(){
       if(val){
         [[Mixpanel sharedInstance] optInTracking];
+        [Fabric with:@[[Crashlytics class]]];
       } else {
         [[Mixpanel sharedInstance] optOutTracking];
       }

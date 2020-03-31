@@ -792,7 +792,7 @@ export class BrowserTab extends PureComponent {
 	handleDeeplinks = async ({ error, params }) => {
 		if (!this.isTabActive()) return false;
 		if (error) {
-			Logger.error(error, 'Error from Branch');
+			Logger.error('Error from Branch: ', error);
 			return;
 		}
 		if (params['+non_branch_link']) {
@@ -1043,7 +1043,7 @@ export class BrowserTab extends PureComponent {
 				this.go(fullUrl);
 				return { url: null };
 			}
-			Logger.error(err, 'Failed to resolve ENS name');
+			Logger.error('Failed to resolve ENS name', err);
 			Alert.alert(strings('browser.error'), strings('browser.failed_to_resolve_ens_name'));
 			this.goBack();
 		}
@@ -1178,7 +1178,7 @@ export class BrowserTab extends PureComponent {
 						try {
 							SearchApi.indexSpotlightItem(item);
 						} catch (e) {
-							Logger.error(e, 'Error adding to spotlight');
+							Logger.error('Error adding to spotlight', e);
 						}
 					}
 					const analyticsEnabled = Analytics.getEnabled();
@@ -1308,7 +1308,7 @@ export class BrowserTab extends PureComponent {
 					break;
 			}
 		} catch (e) {
-			Logger.error(e, `Browser::onMessage on ${this.state.inputValue}`);
+			Logger.error(`Browser::onMessage on ${this.state.inputValue}`, e.toString());
 		}
 	};
 
@@ -1690,7 +1690,7 @@ export class BrowserTab extends PureComponent {
 		this.setState({ showApprovalDialog: false, showApprovalDialogHostname: undefined });
 		this.approvalRequest &&
 			this.approvalRequest.reject &&
-			this.approvalRequest.reject(new Error('User rejected account access'));
+			this.approvalRequest.reject('User rejected account access');
 	};
 
 	renderApprovalModal = () => {

@@ -225,7 +225,7 @@ class AdvancedSettings extends PureComponent {
 				url
 			});
 		} catch (err) {
-			Logger.error(err, 'State log error');
+			Logger.error('State log error', err);
 		}
 	};
 
@@ -253,7 +253,7 @@ class AdvancedSettings extends PureComponent {
 				url
 			});
 		} catch (err) {
-			Logger.error(err, 'Instapay log error');
+			Logger.error('Instapay log error', err);
 		}
 	};
 

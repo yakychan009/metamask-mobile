@@ -59,9 +59,8 @@ export default class PubNubWrapper {
 				() => {
 					setTimeout(() => {
 						if (this.timeout) {
-							const error = new Error('Sync::timeout');
-							Logger.error(error);
-							reject(error);
+							Logger.error('Sync::timeout');
+							reject('sync-timeout');
 						} else {
 							resolve();
 						}
@@ -142,18 +141,15 @@ export default class PubNubWrapper {
 		this.pubnubListener = {
 			message: ({ channel, message }) => {
 				if (channel !== this.channelName || !message) {
-					Logger.error(new Error('Unrecognized message'), {
-						thisChannelName: this.channelName,
-						channel,
-						message
-					});
+					Logger.log('Sync::message', channel !== this.channelName, !message);
+					Logger.error('Sync::message', channel !== this.channelName, !message);
 					this.timeout = false;
 					return false;
 				}
 				if (message.event === 'error-sync') {
 					this.timeout = false;
 					this.disconnectWebsockets();
-					Logger.error(new Error('Sync::error-sync'), { channel, message });
+					Logger.error('Sync::error-sync');
 					onErrorSync();
 				}
 				if (message.event === 'syncing-data' && message.currentPkg > this.lastReceivedPkg) {
@@ -165,7 +161,8 @@ export default class PubNubWrapper {
 							const data = JSON.parse(this.incomingDataStr);
 							onSyncingData(data);
 						} catch (e) {
-							Logger.error(e, 'Sync::parsing');
+							Logger.log('Sync::parsing', e.toString());
+							Logger.error('Sync::parsing', e);
 						}
 					}
 				}

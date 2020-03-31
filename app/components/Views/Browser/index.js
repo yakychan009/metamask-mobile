@@ -270,7 +270,7 @@ class Browser extends PureComponent {
 					resolve(true);
 				},
 				error => {
-					Logger.error(error, `Error saving tab ${url}`);
+					Logger.error(`Error saving tab ${url}`, error);
 					reject(error);
 				}
 			);

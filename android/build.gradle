@@ -57,3 +57,17 @@ allprojects {
 		}
 	}
 }
+
+subprojects {project ->
+	if (project.name.contains('react-native-fabric')) {
+		buildscript {
+			repositories {
+				google()
+				jcenter()
+				maven {
+					url = 'https://dl.bintray.com/android/android-tools/'
+				}
+			}
+		}
+	}
+}

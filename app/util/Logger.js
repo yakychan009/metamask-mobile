@@ -1,7 +1,8 @@
 'use strict';
-
-import { addBreadcrumb, captureException, withScope } from '@sentry/react-native';
+// eslint-disable-next-line import/default
+import Fabric from 'react-native-fabric';
 import AsyncStorage from '@react-native-community/async-storage';
+import Device from '../util/Device';
 
 /**
  * Wrapper class that allows us to override
@@ -17,41 +18,35 @@ export default class Logger {
 	 * @returns - void
 	 */
 	static async log(...args) {
+		// TODO use crashlytics opt-in
 		// Check if user passed accepted opt-in to metrics
 		const metricsOptIn = await AsyncStorage.getItem('@MetaMask:metricsOptIn');
 		if (__DEV__) {
 			args.unshift('[MetaMask DEBUG]:');
 			console.log.apply(null, args); // eslint-disable-line no-console
 		} else if (metricsOptIn === 'agreed') {
-			addBreadcrumb({
-				message: JSON.stringify(args)
-			});
+			Fabric.Crashlytics.log(JSON.stringify(args));
 		}
 	}
 
 	/**
 	 * console.error wrapper
 	 *
-	 * @param {Error} error - error to be logged
-	 * @param {string|object} extra - Extra error info
+	 * @param {object} args - data to be logged
 	 * @returns - void
 	 */
-	static async error(error, extra) {
+	static async error(...args) {
+		// TODO use crashlytics opt-in
 		// Check if user passed accepted opt-in to metrics
 		const metricsOptIn = await AsyncStorage.getItem('@MetaMask:metricsOptIn');
 		if (__DEV__) {
-			console.warn('[MetaMask DEBUG]:', error); // eslint-disable-line no-console
+			args.unshift('[MetaMask DEBUG]:');
+			console.warn(args); // eslint-disable-line no-console
 		} else if (metricsOptIn === 'agreed') {
-			if (extra) {
-				if (typeof extra === 'string') {
-					extra = { message: extra };
-				}
-				withScope(scope => {
-					scope.setExtras(extra);
-					captureException(error);
-				});
+			if (Device.isAndroid()) {
+				Fabric.Crashlytics.logException(JSON.stringify(args));
 			} else {
-				captureException(error);
+				Fabric.Crashlytics.recordError(JSON.stringify(args));
 			}
 		}
 	}

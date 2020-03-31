@@ -151,7 +151,7 @@ class SyncWithExtension extends PureComponent {
 		} catch (e) {
 			if (!firstAttempt) {
 				this.props.navigation.goBack();
-				if (e.message === 'Sync::timeout') {
+				if (e.toString() === 'sync-timeout') {
 					Alert.alert(
 						strings('sync_with_extension.outdated_qr_code'),
 						strings('sync_with_extension.outdated_qr_code_desc')
@@ -163,7 +163,9 @@ class SyncWithExtension extends PureComponent {
 					);
 				}
 			}
-			Logger.error(e, 'Sync::startSync', { firstAttempt });
+			Logger.log('Sync::startSync', firstAttempt);
+			Logger.log('Sync::startSync', e.toString());
+			Logger.error('Sync::startSync', e);
 			return false;
 		}
 	};
@@ -263,7 +265,7 @@ class SyncWithExtension extends PureComponent {
 					}
 					await AsyncStorage.setItem('@MetaMask:biometryChoice', this.state.biometryType);
 				} catch (e) {
-					Logger.error(e, 'User cancelled biometrics permission');
+					Logger.error('User cancelled biometrics permission', e);
 					await AsyncStorage.removeItem('@MetaMask:biometryChoice');
 				}
 			}
@@ -281,7 +283,7 @@ class SyncWithExtension extends PureComponent {
 			this.dataToSync = null;
 			this.props.navigation.push('SyncWithExtensionSuccess');
 		} catch (e) {
-			Logger.error(e, 'Sync::disconnect');
+			Logger.error('Sync::disconnect', e);
 			Alert.alert(strings('sync_with_extension.error_title'), strings('sync_with_extension.error_message'));
 			this.setState({ loading: false });
 			this.props.navigation.goBack();

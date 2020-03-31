@@ -87,7 +87,7 @@ class ImportPrivateKeySuccess extends PureComponent {
 			const accountsOrdered = allKeyrings.reduce((list, keyring) => list.concat(keyring.accounts), []);
 			PreferencesController.setSelectedAddress(accountsOrdered[accountsOrdered.length - 1]);
 		} catch (e) {
-			Logger.error(e, 'Error while refreshing imported pkey');
+			Logger.error('Error while refreshing imported pkey', e);
 		}
 		InteractionManager.runAfterInteractions(() => {
 			BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);

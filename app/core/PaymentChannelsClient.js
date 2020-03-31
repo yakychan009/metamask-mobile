@@ -156,7 +156,7 @@ class PaymentChannelsClient {
 								this.setState({ blocked: false });
 							}, 60 * BLOCKED_DEPOSIT_DURATION_MINUTES * 1000);
 						}
-						Logger.error(e, 'ExternalWallet::sign');
+						Logger.error('ExternalWallet::sign', e);
 						throw e;
 					}
 				}
@@ -179,7 +179,7 @@ class PaymentChannelsClient {
 			});
 		} catch (e) {
 			this.logCurrentState('PC::createClient');
-			Logger.error(e, 'PC::createClient');
+			Logger.error('PC::createClient', e);
 			throw e;
 		}
 	}
@@ -203,7 +203,7 @@ class PaymentChannelsClient {
 			Logger.log('PC::pollConnextState connext.start succesful');
 		} catch (e) {
 			this.logCurrentState('PC::start');
-			Logger.error(e, 'PC::start');
+			Logger.error('PC::start', e);
 		}
 		// register connext listeners
 		connext.on('onStateChange', async state => {
@@ -229,7 +229,7 @@ class PaymentChannelsClient {
 				}
 			} catch (e) {
 				this.logCurrentState('PC::onStateChange');
-				Logger.error(e, 'PC::onStateChange');
+				Logger.error('PC::onStateChange', e);
 			}
 		});
 	}
@@ -265,7 +265,7 @@ class PaymentChannelsClient {
 			await this.autoSwap();
 		} catch (e) {
 			this.logCurrentState('PC::autoswap');
-			Logger.error(e, 'PC::autoswap');
+			Logger.error('PC::autoswap', e);
 			this.setState({ swapPending: false });
 		}
 		this.autoswapHandler = setTimeout(() => {
@@ -380,7 +380,7 @@ class PaymentChannelsClient {
 			this.setState({ depositPending: true });
 		} catch (e) {
 			this.logCurrentState('PC::deposit');
-			Logger.error(e, 'PC::deposit');
+			Logger.error('PC::deposit', e);
 			throw e;
 		}
 	};
@@ -419,7 +419,7 @@ class PaymentChannelsClient {
 			await connext.buy(data);
 		} catch (e) {
 			this.logCurrentState('PC::buy');
-			Logger.error(e, 'PC::buy');
+			Logger.error('PC::buy', e);
 		}
 	};
 
@@ -443,7 +443,7 @@ class PaymentChannelsClient {
 			this.setState({ withdrawalPending: true, withdrawalPendingValue: toWei(renderFromWei(balanceTokenUser)) });
 		} catch (e) {
 			this.logCurrentState('PC::withdraw');
-			Logger.error(e, 'PC::withdraw');
+			Logger.error('PC::withdraw', e);
 		}
 	};
 
@@ -483,7 +483,7 @@ const instance = {
 				await client.pollAndSwap();
 			} catch (e) {
 				client.logCurrentState('PC::init');
-				Logger.error(e, 'PC::init');
+				Logger.error('PC::init', e);
 			}
 		}
 	},
