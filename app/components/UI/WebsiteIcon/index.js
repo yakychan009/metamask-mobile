@@ -114,13 +114,16 @@ export default class WebsiteIcon extends PureComponent {
 
 		icons.forEach(_icon => {
 			const sizes = _icon.getAttribute('sizes');
+			// split `32` from `32x32` (for example) and coerce into int
 			const _size = parseInt(sizes.split('x')[0]);
+			// compare sizes to get the largest icon
 			if (_size > size) {
 				size = _size;
 				icon = _icon;
 			}
 		});
 		let href = icon.getAttribute('href');
+		// use this to determine if the host needs to be included
 		if (!href.indexOf(host) >= 0) {
 			href = host + href;
 		}
