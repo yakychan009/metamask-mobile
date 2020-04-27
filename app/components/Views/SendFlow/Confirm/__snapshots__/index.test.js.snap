@@ -83,17 +83,10 @@ exports[`Confirm should render correctly 1`] = `
         }
       />
     </View>
-    <View
-      style={
-        Object {
-          "marginHorizontal": 24,
-        }
-      }
-    >
-      <TransactionSummary
-        gasEstimationReady={false}
-      />
-    </View>
+    <TransactionReviewFeeCard
+      gasEstimationReady={false}
+      toggleCustomGasModal={[Function]}
+    />
     <View
       style={
         Object {
@@ -101,30 +94,6 @@ exports[`Confirm should render correctly 1`] = `
         }
       }
     >
-      <TouchableOpacity
-        activeOpacity={0.2}
-        disabled={true}
-        onPress={[Function]}
-        style={
-          Object {
-            "padding": 12,
-          }
-        }
-      >
-        <Text
-          style={
-            Object {
-              "alignSelf": "center",
-              "color": "#037dd6",
-              "fontFamily": "CircularStd-Medium",
-              "fontSize": 14,
-              "fontWeight": "400",
-            }
-          }
-        >
-          Adjust transaction fee
-        </Text>
-      </TouchableOpacity>
       <TouchableOpacity
         activeOpacity={0.2}
         onPress={[Function]}
