@@ -33,6 +33,7 @@ import { fetchBasicGasEstimates, convertApiValueToGWEI } from '../../../../util/
 import Engine from '../../../../core/Engine';
 import Logger from '../../../../util/Logger';
 import ActionModal from '../../../UI/ActionModal';
+import TransactionReviewFeeCard from '../../../UI/TransactionReview/TransactionReviewFeeCard';
 import CustomGas from '../CustomGas';
 import ErrorMessage from '../ErrorMessage';
 import TransactionsNotificationManager from '../../../../core/TransactionsNotificationManager';
@@ -80,9 +81,6 @@ const styles = StyleSheet.create({
 		fontSize: 44,
 		textAlign: 'center'
 	},
-	summaryWrapper: {
-		marginHorizontal: 24
-	},
 	buttonNext: {
 		flex: 1,
 		marginHorizontal: 24,
@@ -104,10 +102,6 @@ const styles = StyleSheet.create({
 	},
 	actionsWrapper: {
 		margin: 24
-	},
-	loader: {
-		backgroundColor: colors.white,
-		height: 10
 	},
 	customGasModalTitle: {
 		borderBottomColor: colors.grey100,
@@ -233,7 +227,11 @@ class Confirm extends PureComponent {
 		/**
 		 * Network provider type as mainnet
 		 */
-		providerType: PropTypes.string
+		providerType: PropTypes.string,
+		/**
+		 * ETH or fiat, depending on user setting
+		 */
+		primaryCurrency: PropTypes.string
 	};
 
 	state = {
@@ -286,6 +284,7 @@ class Confirm extends PureComponent {
 		const valueBN = hexToBN(value);
 		const transactionFeeFiat = weiToFiat(weiTransactionFee, conversionRate, currentCurrency);
 		const parsedTicker = getTicker(ticker);
+		const transactionFee = `${renderFromWei(weiTransactionFee)} ${parsedTicker}`;
 
 		if (selectedAsset.isETH) {
 			fromAccountBalance = `${renderFromWei(accounts[from].balance)} ${parsedTicker}`;
@@ -339,6 +338,7 @@ class Confirm extends PureComponent {
 			transactionValue,
 			transactionValueFiat,
 			transactionFeeFiat,
+			transactionFee,
 			transactionTo,
 			transactionTotalAmount,
 			transactionTotalAmountFiat
@@ -563,17 +563,6 @@ class Confirm extends PureComponent {
 		this.setState({ transactionConfirmed: false });
 	};
 
-	renderIfGastEstimationReady = children => {
-		const { gasEstimationReady } = this.state;
-		return !gasEstimationReady ? (
-			<View style={styles.loader}>
-				<ActivityIndicator size="small" />
-			</View>
-		) : (
-			children
-		);
-	};
-
 	render = () => {
 		const {
 			transaction: { from },
@@ -581,13 +570,14 @@ class Confirm extends PureComponent {
 			transactionFromName,
 			selectedAsset
 		} = this.props.transactionState;
-		const { showHexData } = this.props;
+		const { showHexData, primaryCurrency } = this.props;
 		const {
 			gasEstimationReady,
 			fromAccountBalance,
 			transactionValue,
 			transactionValueFiat,
 			transactionFeeFiat,
+			transactionFee,
 			transactionTo,
 			transactionTotalAmount,
 			transactionTotalAmountFiat,
@@ -636,28 +626,23 @@ class Confirm extends PureComponent {
 							</View>
 						</View>
 					)}
-					<View style={styles.summaryWrapper}>
-						<TransactionSummary
-							amount={transactionValueFiat}
-							fee={transactionFeeFiat}
-							totalAmount={transactionTotalAmountFiat}
-							secondaryTotalAmount={transactionTotalAmount}
-							gasEstimationReady={gasEstimationReady}
-						/>
-					</View>
+					<TransactionReviewFeeCard
+						totalGasFiat={transactionFeeFiat}
+						totalGasEth={transactionFee}
+						totalFiat={transactionTotalAmountFiat}
+						fiat={transactionValueFiat}
+						totalValue={transactionTotalAmount}
+						transactionValue={transactionValue}
+						primaryCurrency={primaryCurrency}
+						gasEstimationReady={gasEstimationReady}
+						toggleCustomGasModal={this.toggleCustomGasModal}
+					/>
 					{errorMessage && (
 						<View style={styles.errorMessageWrapper}>
 							<ErrorMessage errorMessage={errorMessage} />
 						</View>
 					)}
 					<View style={styles.actionsWrapper}>
-						<TouchableOpacity
-							style={styles.actionTouchable}
-							disabled={!gasEstimationReady}
-							onPress={this.toggleCustomGasModal}
-						>
-							<Text style={styles.actionText}>{strings('transaction.adjust_transaction_fee')}</Text>
-						</TouchableOpacity>
 						{showHexData && (
 							<TouchableOpacity style={styles.actionTouchable} onPress={this.toggleHexDataModal}>
 								<Text style={styles.actionText}>{strings('transaction.hex_data')}</Text>
@@ -693,7 +678,8 @@ const mapStateToProps = state => ({
 	showHexData: state.settings.showHexData,
 	providerType: state.engine.backgroundState.NetworkController.provider.type,
 	ticker: state.engine.backgroundState.NetworkController.provider.ticker,
-	transactionState: state.newTransaction
+	transactionState: state.newTransaction,
+	primaryCurrency: state.settings.primaryCurrency
 });
 
 const mapDispatchToProps = dispatch => ({
