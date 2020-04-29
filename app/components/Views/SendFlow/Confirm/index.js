@@ -418,7 +418,7 @@ class Confirm extends PureComponent {
 	};
 
 	renderCustomGasModal = () => {
-		const { customGasModalVisible, currentCustomGasSelected } = this.state;
+		const { customGasModalVisible, currentCustomGasSelected, gasError } = this.state;
 		const { gas, gasPrice } = this.props.transactionState.transaction;
 		return (
 			<Modal
@@ -440,6 +440,7 @@ class Confirm extends PureComponent {
 					handleGasFeeSelection={this.handleGasFeeSelection}
 					gas={gas}
 					gasPrice={gasPrice}
+					gasError={gasError}
 					toggleCustomGasModal={this.toggleCustomGasModal}
 					handleSetGasFee={this.handleSetGasFee}
 				/>
