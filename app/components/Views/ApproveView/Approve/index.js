@@ -20,11 +20,11 @@ import TransactionDirection from '../../TransactionDirection';
 import contractMap from 'eth-contract-metadata';
 import { safeToChecksumAddress, renderShortAddress, renderAccountName } from '../../../../util/address';
 import Engine from '../../../../core/Engine';
-import ActionView from '../../../UI/ActionView';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
 import CustomGas from '../../SendFlow/CustomGas';
 import ActionModal from '../../../UI/ActionModal';
+import Modal from 'react-native-modal';
 import { strings } from '../../../../../locales/i18n';
 import { setTransactionObject } from '../../../../actions/transaction';
 import { BNToHex, hexToBN } from 'gaba/dist/util';
@@ -260,6 +260,15 @@ const styles = StyleSheet.create({
 		color: colors.grey500,
 		fontSize: 14,
 		lineHeight: 20
+	},
+	bottomModal: {
+		justifyContent: 'flex-end',
+		margin: 0
+	},
+	approveView: {
+		backgroundColor: colors.white,
+		borderTopLeftRadius: 20,
+		borderTopRightRadius: 20
 	}
 });
 
@@ -748,15 +757,27 @@ class Approve extends PureComponent {
 		const amount = decodeTransferData('transfer', data)[1];
 		return (
 			<SafeAreaView style={styles.wrapper}>
-				<TransactionDirection />
-				<ActionView
+				<Modal
+					isVisible
+					animationIn="slideInUp"
+					animationOut="slideOutDown"
+					style={styles.bottomModal}
+					backdropOpacity={0.7}
+					animationInTiming={600}
+					animationOutTiming={600}
 					cancelText={strings('spend_limit_edition.cancel')}
 					confirmText={strings('spend_limit_edition.approve')}
 					onCancelPress={this.onCancel}
 					onConfirmPress={this.onConfirm}
+					onBackdropPress={this.onCancel}
+					onBackButtonPress={this.onCancel}
+					onSwipeComplete={this.onCancel}
 					confirmButtonMode={'confirm'}
+					swipeDirection="down"
+					propagateSwipe
 				>
-					<View>
+					<View style={styles.approveView}>
+						<TransactionDirection />
 						<View style={styles.section} testID={'approve-screen'}>
 							<View style={styles.websiteIconWrapper}>
 								<WebsiteIcon style={styles.icon} url={transaction.origin} title={host} />
@@ -881,7 +902,7 @@ class Approve extends PureComponent {
 						{this.renderCustomGasModal()}
 						{this.renderEditPermissionModal()}
 					</View>
-				</ActionView>
+				</Modal>
 			</SafeAreaView>
 		);
 	};
